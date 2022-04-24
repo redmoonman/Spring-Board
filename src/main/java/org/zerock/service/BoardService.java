@@ -19,6 +19,8 @@ public interface BoardService {
 
 	 List<BoardVO> getList();
 
+	 int getTotal(Criteria cri);
+
 
 
 }

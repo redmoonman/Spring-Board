@@ -9,7 +9,7 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Tables</h1>
+                    <h1 class="page-header">한지욱 게시판</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -18,7 +18,7 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            DataTables Advanced Tables
+                            Han, Ji-wook
                        <button id='regBtn' type="button" class="btn btn-xs pull-right">Register New Board</button>
                         </div>
                         <!-- /.panel-heading -->
@@ -49,12 +49,74 @@
                                 </tbody>
                             </table>
                             <!-- /.table-responsive -->
-                            
-                            
-                           
-            
-                          
-        <h3>${pageMaker}</h3>                
+
+
+                       
+        <form id='searchForm' action="/board/list" method="get">
+        	<select name='type'>
+        	    <option value="" ${pageMaker.cri.type == null?"selected":"" } >---</option>
+        		<option value="T" ${pageMaker.cri.type eq 'T'? "selected":"" } >제목</option>
+        		<option value="C" ${pageMaker.cri.type eq 'C'? "selected":"" } >내용</option>
+        		<option value="W" ${pageMaker.cri.type eq 'W'? "selected":"" } >작성자</option>
+        		<option value="TC" ${pageMaker.cri.type eq 'TC'? "selected":"" } >제목+내용</option>
+        		<option value="TCW" ${pageMaker.cri.type eq 'TCW'? "selected":"" } >제목+내용+작성자</option>
+        	</select> 
+        	<input type='text' name='keyword' value='${pageMaker.cri.keyword }'>
+        	<input type='hidden' name='pageNum' value='${pageMaker.cri.pageNum }'>
+        	<input type='hidden' name='amount' value='${pageMaker.cri.amount }'>
+        	<button class='btn btn-default'>search</button>
+        </form>                    
+                 
+        <h1>파일 업로드 - Form방식</h1>          
+        <form action="uploadFormAction" method="post" enctype="multipart/form-data">
+        <input type='file' name='uploadFile' multiple>
+        <button>Submit</button>
+        </form>                          
+         
+        <h1>파일 업로드 - Ajax방식</h1>          
+
+        <div class='uploadDiv'>
+        <input type='file' name='uploadFile' multiple>
+        </div>
+        <button id='uploadBtn'>Upload</button>
+        
+        <script 
+        src="http://code.jquery.com/jquery-3.3.1.min.js" 
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
+        crossorigin="anonymous"></script>  
+
+		<script>
+		$(document).ready(function(){
+		
+			$("#uploadBtn").on("click", function(e){
+				
+			var formDate = new FormData();
+			var inputFile = $("input[name='uploadFile']");
+			var files = inputFile[0].files;
+			console.log(files);
+				
+			//add File Data to formData
+			for(var i=0;i<files.length;i++){
+				formData.append("uploadFile", files[i]);
+			}
+			
+			$.ajax({
+				url: '/uploadAjaxAction',
+				processData: false,
+				contentType: false,
+				data: formDate,
+				type: 'POST',
+				success: function(result){
+					alert("Uploaded");
+				}
+			});
+			});
+		});
+		</script> 
+
+
+
+
         <div class='pull-right'>
           <ul class="pagination">
    
@@ -84,6 +146,8 @@
             <form id='actionForm' action="/board/list" method='get'>
  				<input type='hidden' name='pageNum' value = '${pageMaker.cri.pageNum}'>
  				<input type='hidden' name='amount' value = '${pageMaker.cri.amount}'>
+ 				<input type='hidden' name='type' value = '${pageMaker.cri.type}'>
+ 				<input type='hidden' name='keyword' value = '${pageMaker.cri.keyword}'>
 			</form>
                             
                             
@@ -179,6 +243,15 @@ $(document).ready(function(){
 	  	  actionForm.attr("action", "/board/get").submit();
 	  }); 
 	  
+	var searchForm = $("#searchForm");
+	  
+	$("#searchForm button").on("click", function(e){
+		e.preventDefault();
+		console.log("..................click");
+		
+		searchForm.find("input[name='pageNum']").val(1);
+		searchForm.submit();
+	});
 	  
 });
 </script>        
